@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hexagonal-api
+  template:
+    metadata:
+      labels:
+        app: hexagonal-api
+    spec:
+      containers:
+      - name: adapter-rest
+        image: larmd/taller-backend:latest
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: hexagonal-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hexagonal-frontend
+  template:
+    metadata:
+      labels:
+        app: hexagonal-frontend
+    spec:
+      containers:
+      - name: web-ui
+        image: larmd/taller-frontend:latest
+        ports:
+        - containerPort: 80
