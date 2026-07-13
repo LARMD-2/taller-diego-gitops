@@ -25,13 +25,13 @@ spec:
         # Validación de Salud (Punto 4)
         livenessProbe:
           httpGet:
-            path: /health
+            path: /
             port: 8000
           initialDelaySeconds: 15
           periodSeconds: 20
         readinessProbe:
           httpGet:
-            path: /health
+            path: /
             port: 8000
           initialDelaySeconds: 5
           periodSeconds: 10
