@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: adapter-rest
-        image: larmd/taller-backend:v1.1.6
+        image: larmd/taller-backend:v1.1.8
         ports:
         - containerPort: 8000
         envFrom:
@@ -59,7 +59,7 @@ spec:
     spec:
       containers:
       - name: web-ui
-        image: larmd/taller-frontend:v1.1.6
+        image: larmd/taller-frontend:v1.1.8
         ports:
         - containerPort: 80
         # Validación de Salud (Punto 4)
