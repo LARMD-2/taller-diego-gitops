@@ -81,13 +81,13 @@ data:
         },
         {
           "id": 3,
-          "title": "SLI de Latencia de Ventas (99% <= 200ms)",
+          "title": "SLI de Latencia de Ventas (99% <= 100ms)",
           "type": "gauge",
           "gridPos": { "h": 8, "w": 6, "x": 12, "y": 0 },
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "targets": [
             {
-              "expr": "sum(rate(http_request_duration_seconds_bucket{handler=~\"/api/v1/ventas.*\", le=\"0.25\"}[5m])) / sum(rate(http_request_duration_seconds_count{handler=~\"/api/v1/ventas.*\"}[5m]))",
+              "expr": "sum(rate(http_request_duration_seconds_bucket{handler=~\"/api/v1/ventas.*\", le=\"0.1\"}[5m])) / sum(rate(http_request_duration_seconds_count{handler=~\"/api/v1/ventas.*\"}[5m]))",
               "legendFormat": "Latencia OK",
               "refId": "C"
             }
@@ -116,7 +116,7 @@ data:
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "targets": [
             {
-              "expr": "5 - (sum(increase(http_request_duration_seconds_count{handler=~\"/api/v1/ventas.*\"}[1h]) or vector(0)) - sum(increase(http_request_duration_seconds_bucket{handler=~\"/api/v1/ventas.*\", le=\"0.25\"}[1h]) or vector(0)))",
+              "expr": "5 - (sum(increase(http_request_duration_seconds_count{handler=~\"/api/v1/ventas.*\"}[1h]) or vector(0)) - sum(increase(http_request_duration_seconds_bucket{handler=~\"/api/v1/ventas.*\", le=\"0.1\"}[1h]) or vector(0)))",
               "legendFormat": "Ventas Lentas Restantes",
               "refId": "D"
             }
