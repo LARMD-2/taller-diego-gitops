@@ -1,0 +1,24 @@
+---
+# Experimento de Chaos Mesh: Inyección de latencia de red en la API
+# Refleja la hipótesis del "Contrato SRE": ¿Sobrevive el sistema a 200ms de latencia hacia la BD?
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: delay-api-persistence-adapter
+  namespace: default
+  labels:
+    # Etiqueta para identificar el experimento en los reportes
+    experiment: latency-hypothesis-v1
+spec:
+  action: delay
+  mode: one          # Afecta a UN solo pod aleatorio (minimiza blast radius)
+  selector:
+    namespaces:
+      - default
+    labelSelectors:
+      app: hexagonal-api   # Objetivo: el adaptador REST de la arquitectura hexagonal
+  delay:
+    latency: "200ms"       # Latencia inyectada (igual que el SLO crítico)
+    correlation: "100"     # 100% de los paquetes se ven afectados
+    jitter: "10ms"         # Pequeña variación para simular red real
+  duration: "5m"           # El experimento dura exactamente 5 minutos
