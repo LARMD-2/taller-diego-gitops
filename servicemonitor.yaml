@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: hexagonal-api-monitor
+  labels:
+    app: hexagonal-api
+    release: observability # Importante para que kube-prometheus-stack lo detecte
+spec:
+  selector:
+    matchLabels:
+      app: hexagonal-api
+  endpoints:
+  - port: http # Debería coincidir con el nombre del puerto en el Service de la API
+    path: /metrics
+    interval: 15s
