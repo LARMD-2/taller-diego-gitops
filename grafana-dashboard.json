@@ -1,0 +1,167 @@
+{
+  "title": "Taller Diego SRE Dashboard",
+  "tags": ["sre", "taller-diego"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "10s",
+  "style": "light",
+  "panels": [
+    {
+      "id": 1,
+      "title": "SLI de Disponibilidad de Ventas (99.5%)",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{handler=~\"/api/v1/ventas.*\", status!~\"5..\"}[30d])) / sum(rate(http_requests_total{handler=~\"/api/v1/ventas.*\"}[30d]))",
+          "legendFormat": "Disponibilidad",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 1,
+          "unit": "percentunit",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#8b2721", "value": null },
+              { "color": "#1e3a5f", "value": 0.995 }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": { "values": false, "calcs": ["lastNotNull"] },
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 2,
+      "title": "Presupuesto de Error: Caídas Permitidas (Disp.)",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        {
+          "expr": "2 - sum(increase(http_requests_total{handler=~\"/api/v1/ventas.*\", status=~\"5..\"}[30d]) or vector(0))",
+          "legendFormat": "Intentos Fallidos Restantes",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#8b2721", "value": null },
+              { "color": "#1e3a5f", "value": 1 }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      }
+    },
+    {
+      "id": 3,
+      "title": "SLI de Latencia de Ventas (99% <= 200ms)",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_request_duration_seconds_bucket{handler=~\"/api/v1/ventas.*\", le=\"0.25\"}[30d])) / sum(rate(http_request_duration_seconds_count{handler=~\"/api/v1/ventas.*\"}[30d]))",
+          "legendFormat": "Latencia P95",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "max": 1,
+          "unit": "percentunit",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#8b2721", "value": null },
+              { "color": "#1e3a5f", "value": 0.99 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Presupuesto de Error: Ventas Lentas Permitidas",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        {
+          "expr": "5 - (sum(increase(http_request_duration_seconds_count{handler=~\"/api/v1/ventas.*\"}[30d]) or vector(0)) - sum(increase(http_request_duration_seconds_bucket{handler=~\"/api/v1/ventas.*\", le=\"0.25\"}[30d]) or vector(0)))",
+          "legendFormat": "Ventas Lentas Restantes",
+          "refId": "D"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "#8b2721", "value": null },
+              { "color": "#1e3a5f", "value": 1 }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      }
+    },
+    {
+      "id": 5,
+      "title": "Tráfico Histórico y Errores de Dominio",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{handler=~\"/api/v1/ventas.*\"}[5m]))",
+          "legendFormat": "Ventas (Req/s)",
+          "refId": "E"
+        },
+        {
+          "expr": "sum(rate(taller_diego_domain_validation_failures_total[5m]))",
+          "legendFormat": "Errores Invariantes de Dominio",
+          "refId": "F"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    }
+  ]
+}
